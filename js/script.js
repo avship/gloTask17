@@ -180,6 +180,12 @@ class DataWorker {
         : JSON.parse(localStorage.getItem(this._localStorageName));
     console.log(this._data);
   }
+  get data() {
+    return JSON.parse(JSON.stringify(this._data));
+  }
+  delElement(id) {
+    this._data.splice(id, 1);
+  }
   addData() {
     console.log(this._data);
     const data = {
@@ -274,15 +280,18 @@ class DataWorker {
     for (const item of workerItems) {
       document
         .querySelector(`#delBtn${item.id}`)
-        .addEventListener("click", (event) => {
-          for (const i in this._data) {
-            if (this._data[i].id === item.id) {
-              this._data.splice(i, 1);
+        .addEventListener("click", function btnRemover(event) {
+          const data = dataWorker.data;
+          console.log(data);
+          for (const i in data) {
+            if (data[i].id === item.id) {
+              dataWorker.delElement(i);
               break;
             }
           }
-          this.renderTables();
-          this.saveData();
+          event.target.removeEventListener("click", btnRemover);
+          dataWorker.renderTables();
+          dataWorker.saveData();
         });
     }
   }
